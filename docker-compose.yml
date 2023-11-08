@@ -1,0 +1,28 @@
+version: '3'
+services:
+  torch_fastapi_train:
+    image: pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+    container_name: torch_fastapi_train_container
+    runtime: nvidia
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ${PWD}:/project_root
+    working_dir: /project_root
+    shm_size: 1g
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+    command: tail -F /dev/null
+    # command: sh -c "jupyter notebook --allow-root --port 8181"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
